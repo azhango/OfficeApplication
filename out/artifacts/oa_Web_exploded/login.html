@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OA办公系统</title>
+    <!-- 导入 Vue 3 -->
+    <script src="/assets/vue/vue.global.js"></script>
+    <!-- 导入样式 -->
+    <link rel="stylesheet" href="/assets/element-plus/element.css"/>
+    <!-- 导入组件库 -->
+    <script src="/assets/element-plus/index.full.js"></script>
+    <!--导入Axios-->
+    <script src="/assets/axios/axios.min.js"></script>
+    <style>
+        .login-box {
+            /*边框*/
+            border: 1px solid #dcdfe6;
+            width: 350px;
+            /*外边距*/
+            margin: 180px auto;
+            /*内边距*/
+            padding: 35px 35px 15px 35px;
+            /*边框圆角*/
+            border-radius: 8px;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            /*边框阴影*/
+            box-shadow: 0 0 25px rgba(144, 145, 153, 0.8);
+        }
+
+        .login-title {
+            text-align: center;
+            margin: 0 auto 40px auto;
+            color: #303133;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <!--     ref代表引用的意思-->
+    <el-form ref="loginForm" label-width="80px" :rules="rules" :model="form" class="login-box">
+        <h2 class="login-title">OA办公系统</h2>
+        <el-form-item label="账号&nbsp;:" prop="username">
+            <el-input type="username" placeholder="请输入账号" v-model="form.username"></el-input>
+        </el-form-item>
+        <el-form-item label="密码&nbsp;:" prop="password">
+            <el-input type="password" placeholder="请输入密码" v-model="form.password"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" v-on:click="onSubmit('loginForm')" style="width: 200px">登录</el-button>
+        </el-form-item>
+    </el-form>
+</div>
+<script>
+    const Main = {
+        data() {
+            return {
+                form: {
+                    username: ''
+                    , password: ''
+                }
+                //规则
+                , rules: {
+                    username: [//required为true则必填，如为空则提示账号不能为空，触发条件trigger市区焦点
+                        {required: true, message: '账号不能为空', trigger: 'blur'}],
+                    password: [{required: true, message: '密码不能为空', trigger: 'blur'}]
+                }
+            }
+        }
+        , methods: {
+            onSubmit: function (formName) {
+                // refs 获取引用
+                const form = this.$refs[formName];
+                // 进行表单校验
+                form.validate((valid) => {
+                    if (valid) {
+                        console.info("表单校验成功,准备提交数据");
+                        const form = this.form;
+                        // ElementPlus内置的消息对话框组件
+                        const $message = this.$message;
+                        const params = new URLSearchParams();
+                        params.append("username", form.username);
+                        params.append("password", form.password);
+                        axios.post("/api/login", params, {}).then(function (response) {
+                            // console.info(response);
+                            const json = response.data;
+                            if (json.code == "0") {
+                                // 保存当前浏览器的用户userId到uid,employeeId到eid
+                                sessionStorage.uid = json.data.user.userId;
+                                sessionStorage.eid = json.data.user.employeeId;
+                                window.location.href = "/index.html";
+                            } else {
+                                $message.error({message: json.message, offset: 100});
+                            }
+                        })
+                    }
+                })
+            }
+        }
+    };
+
+    // 初始化Vue，绑定Main中的数据，利用ElementPlus对#app容器进行重新渲染
+    const app = Vue.createApp(Main);
+    app.use(ElementPlus);
+    app.mount("#app");
+</script>
+</body>
+</html>

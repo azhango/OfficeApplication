@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.hua.oa.mapper.NoticeMapper">
+    <insert id="insert" parameterType="pers.hua.oa.entity.Notice"
+            useGeneratedKeys="true" keyProperty="noticeId" keyColumn="notice_id">
+        INSERT INTO `hua_oa`.`sys_notice` (`receiver_id`, `content`, `create_time`)
+        VALUES (#{receiverId}, #{content}, #{createTime});
+    </insert>
+    <select id="selectByReceiverId" parameterType="Long" resultType="pers.hua.oa.entity.Notice">
+        select notice_id, receiver_id, content, create_time
+        from sys_notice where receiver_id = #{value} order by create_time desc limit 0,30
+    </select>
+</mapper>
