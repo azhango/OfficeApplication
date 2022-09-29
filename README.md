@@ -4,7 +4,7 @@
 
 ## 流程
 
-![image-20220711190357791](https://img.ikuboy.cn/blog/202207111904887.png)
+![image-20220711190357791](http://crazyimg.test.upcdn.net/blog/202207111904887.png)
 
 ## 框架&组件
 
